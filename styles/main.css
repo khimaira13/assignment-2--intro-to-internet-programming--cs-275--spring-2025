@@ -9,27 +9,69 @@
 //
 // DON’T PROCEED UNTIL YOU’RE SURE STYLELINT AND EDITORCONFIG ARE WORKING RIGHT
 // -------------------------------------------------------------------------- */
-abcdef {
-     color: cs275
+body {
+  font-family: 'Open Sans', sans-serif;
+  font-weight: 300;
+  font-size: 16px;
+  line-height: 1.4;
+  text-align: center;
 }
 
+h1 {
+  padding-top: 20px;
+  font-size: 2rem;
+  font-weight: 600;
+  line-height: 1.1875;
+}
 
+.carousel {
+  max-width: 640px;
+  width: 100%;
+  margin: auto;
+  position: relative;
+  overflow: hidden;
+}
 
+.carousel-navigation {
+  position: absolute;
+  top: 35%;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+}
 
+.album-title,
+.artist-link,
+.credit,
+.creditCombine,
+.review-content,
+.review-source {
+  display: block;
+}
 
+.album-title {
+  padding-top: 30px;
+  font-size: 1.5rem;
+  font-weight: bold;
+}
 
+.artist-link {
+  padding-bottom: 30px;
+  font-size: 1rem;
+  color: blue;
+  text-decoration: none;
+}
 
+.credit {
+  padding-bottom: 20px;
+}
 
+.review-content {
+  text-align: left;
+}
 
-
-
-
-
-
-
-
-
-
-
-
-
+.review-source {
+  padding-top: 20px;
+  color: blue;
+  text-align: left;
+}
