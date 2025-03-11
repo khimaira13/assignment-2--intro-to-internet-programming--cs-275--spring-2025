@@ -58,12 +58,12 @@ async function allBrowsers () {
 }
 
 let validateHTML = () => {
-    return src([`dev/html/*.html`, `dev/html/**/*.html`])
+    return src([`./*.html,dev/html/*.html`, `dev/html/**/*.html`])
         .pipe(htmlValidator(undefined));
 };
 
 let compileCSSForDev = () => {
-    return src(`dev/styles/main.css`)
+    return src(`./styles/main.css`)
         .pipe(sass.sync({
             outputStyle: `expanded`,
             precision: 10
@@ -72,25 +72,25 @@ let compileCSSForDev = () => {
 };
 
 let lintJS = () => {
-    return src(`dev/**/*.js`)
+    return src(`js/*.js`)
         .pipe(jsLinter())
         .pipe(jsLinter.formatEach(`compact`));
 };
 
 let transpileJSForDev = () => {
-    return src(`dev/**/*.js`)
+    return src(`./js/*.js`)
         .pipe(babel())
-        .pipe(dest(`prod`));
+        .pipe(dest(`prod/js`));
 };
 
 let compressHTML = () => {
-    return src([`dev/html/*.html`, `dev/html/**/*.html`])
+    return src([`./*.html`])
         .pipe(htmlCompressor({collapseWhitespace: true}))
         .pipe(dest(`prod/html`));
 };
 
 let compressCSSForProd = () => {
-    return src(`dev/styles/*.css`)
+    return src(`./styles/*.css`)
         .pipe(sass.sync({
             outputStyle: `compressed`,
             precision: 10
@@ -107,7 +107,7 @@ let compressJSForProd = () => {
 };
 
 let compressImages = () => {
-    return src(`dev/img/**/*`)
+    return src(`./img/**/*`)
         .pipe(imageCompressor({
             optipng: [`-i 1`, `-strip all`, `-fix`, `-o7`, `-force`],
             pngquant: [`--speed=1`, `--force`, 256],
@@ -131,10 +131,24 @@ let copyUnprocessedAssetsForProd = () => {
         `!dev/html/**`,  // or any sub folders;
         `!dev/img/`,     // ignore images;
         `!dev/**/*.js`,  // ignore JS;
-        `!dev/styles/**` // and, ignore Sass/CSS.
+        `!dev/styles/**`, // and, ignore Sass/CSS.
     ], {dot: true})
         .pipe(dest(`prod`));
 };
+
+let copyUnprocessedImgForProd = () => {
+    return src([
+        `./img/**/*`
+    ], {dot: true})
+        .pipe(dest(`prod/img/`));
+}
+
+let copyUnprocessedJSONForProd = () => {
+    return src([
+        `./json/**/*`
+    ], {dot: true})
+        .pipe(dest(`prod/json/`));
+}
 
 let serve = () => {
     browserSync({
@@ -150,16 +164,16 @@ let serve = () => {
         }
     });
 
-    watch(`dev/js/*.js`, series(lintJS, transpileJSForDev))
+    watch(`./js/*.js`, series(lintJS, transpileJSForDev))
         .on(`change`, reload);
 
-    watch(`dev/styles/**/*.css`, compileCSSForDev)
+    watch(`./styles/**/*.css`, compileCSSForDev)
         .on(`change`, reload);
 
-    watch(`dev/html/**/*.html`, validateHTML)
+    watch(`./html/**/*.html`, validateHTML)
         .on(`change`, reload);
 
-    watch(`dev/img/**/*`)
+    watch(`./img/**/*`)
         .on(`change`, reload);
 };
 
@@ -230,6 +244,8 @@ exports.compressCSSForProd = compressCSSForProd;
 exports.compressJSForProd = compressJSForProd;
 exports.compressImages = compressImages;
 exports.copyUnprocessedAssetsForProd = copyUnprocessedAssetsForProd;
+exports.copyUnprocessedImgForProd = copyUnprocessedImgForProd;
+exports.copyUnprocessedJSONForProd = copyUnprocessedJSONForProd;
 exports.clean = clean;
 exports.lintCSS = lintCSS;
 exports.default = series(
@@ -242,5 +258,7 @@ exports.build = series(
     compressCSSForProd,
     compressJSForProd,
     copyUnprocessedAssetsForProd,
+    copyUnprocessedJSONForProd,
+    copyUnprocessedImgForProd,
     serve
 );
